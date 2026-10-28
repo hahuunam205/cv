@@ -1,321 +1,416 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV Công Nghệ Thông Tin</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV — Hà Hữu Nam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+    *{margin:0;padding:0;box-sizing:border-box}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
+    :root{
+        --cyan:#2ee6ff;
+        --violet:#7c5cff;
+        --pink:#ff4ecd;
+        --text:#e8ecf5;
+        --muted:#93a1b8;
+        --card-bg:linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.015));
+        --border:rgba(255,255,255,.09);
+    }
 
-        body {
-            background-color: #e0e0e0;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
+    html{scroll-behavior:smooth}
 
-        /* Nút chuyển đổi ngôn ngữ */
-        #lang-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #2c3e50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: background-color 0.3s ease;
-        }
+    body{
+        font-family:'Inter',system-ui,sans-serif;
+        color:var(--text);
+        background:
+            radial-gradient(1200px 800px at 12% -5%, rgba(46,230,255,.10), transparent 60%),
+            radial-gradient(1000px 700px at 88% 25%, rgba(124,92,255,.13), transparent 60%),
+            radial-gradient(900px 600px at 50% 110%, rgba(255,78,205,.08), transparent 60%),
+            #05060a;
+        min-height:100vh;
+        overflow-x:hidden;
+        -webkit-font-smoothing:antialiased;
+    }
 
-        #lang-toggle:hover {
-            background-color: #e74c3c;
-        }
+    /* ===== 3D CANVAS ===== */
+    #bg3d{
+        position:fixed; inset:0;
+        width:100%; height:100%;
+        z-index:0;
+        pointer-events:none;
+    }
 
-        .cv-container {
-            width: 850px;
-            display: flex;
-            background-color: #fff;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-            min-height: 1100px;
-        }
+    /* ===== LANGUAGE BUTTON ===== */
+    #lang-toggle{
+        position:fixed;
+        top:24px; right:24px;
+        z-index:100;
+        padding:11px 22px;
+        font-family:'Inter',sans-serif;
+        font-size:.8rem;
+        font-weight:600;
+        letter-spacing:.05em;
+        color:#d9f7ff;
+        background:rgba(12,18,32,.65);
+        border:1px solid rgba(46,230,255,.45);
+        border-radius:100px;
+        cursor:pointer;
+        backdrop-filter:blur(12px);
+        -webkit-backdrop-filter:blur(12px);
+        box-shadow:0 0 24px rgba(46,230,255,.18), inset 0 0 12px rgba(46,230,255,.07);
+        transition:all .35s cubic-bezier(.2,.8,.2,1);
+    }
+    #lang-toggle:hover{
+        background:rgba(46,230,255,.14);
+        border-color:var(--cyan);
+        color:#fff;
+        transform:translateY(-2px);
+        box-shadow:0 0 34px rgba(46,230,255,.45), inset 0 0 16px rgba(46,230,255,.15);
+    }
+    #lang-toggle:active{transform:translateY(0) scale(.97)}
 
-        /* --- LEFT COLUMN --- */
-        .left-column {
-            width: 35%;
-            /* Sử dụng ảnh nền mờ tối để giống bản gốc, có thể thay bằng ảnh code/tech */
-            background: linear-gradient(rgba(30, 40, 50, 0.85), rgba(30, 40, 50, 0.85)), 
-                        url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop') no-repeat center center;
-            background-size: cover;
-            color: #ffffff;
-            padding: 40px 30px;
-            display: flex;
-            flex-direction: column;
-        }
+    /* ===== LAYOUT ===== */
+    .cv-wrapper{
+        position:relative;
+        z-index:2;
+        max-width:1180px;
+        margin:0 auto;
+        padding:96px 24px 80px;
+        display:grid;
+        grid-template-columns:330px minmax(0,1fr);
+        gap:26px;
+        align-items:start;
+    }
 
-        .profile-pic-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
+    .sidebar{position:sticky; top:90px; display:flex; flex-direction:column; gap:22px;}
+    .content{display:flex; flex-direction:column; gap:22px;}
 
-        .profile-pic {
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
-            border: 4px solid #ffffff;
-            object-fit: cover;
-            background-color: #ccc;
-        }
+    /* ===== CARD ===== */
+    .card{
+        position:relative;
+        background:var(--card-bg);
+        border:1px solid var(--border);
+        border-radius:24px;
+        padding:28px;
+        backdrop-filter:blur(16px);
+        -webkit-backdrop-filter:blur(16px);
+        overflow:hidden;
+        transform-style:preserve-3d;
+        will-change:transform;
+        transition:transform .3s cubic-bezier(.2,.8,.2,1),
+                   border-color .4s, box-shadow .4s;
+    }
+    .card::after{
+        content:"";
+        position:absolute;
+        top:-60%; left:-60%;
+        width:220%; height:220%;
+        background:radial-gradient(circle at 30% 30%, rgba(46,230,255,.14), transparent 45%);
+        opacity:0;
+        transition:opacity .5s;
+        pointer-events:none;
+    }
+    .card:hover::after{opacity:1}
+    .card:hover{
+        border-color:rgba(46,230,255,.35);
+        box-shadow:0 24px 70px -28px rgba(46,230,255,.55),
+                   0 0 0 1px rgba(46,230,255,.10) inset;
+    }
 
-        .name {
-            text-align: center;
-            font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
+    /* ===== REVEAL ANIMATION ===== */
+    .reveal{
+        opacity:0;
+        transform:translateY(40px) scale(.97);
+        transition:opacity .9s cubic-bezier(.16,1,.3,1),
+                   transform .9s cubic-bezier(.16,1,.3,1);
+    }
+    .reveal.in{opacity:1; transform:none}
 
-        .job-title {
-            text-align: center;
-            font-size: 1rem;
-            font-weight: 300;
-            color: #f39c12;
-            margin-bottom: 40px;
-            letter-spacing: 1px;
-        }
+    /* ===== AVATAR ===== */
+    .avatar-wrap{
+        position:relative;
+        width:152px; height:152px;
+        margin:2px auto 24px;
+    }
+    .avatar-wrap::before{
+        content:"";
+        position:absolute;
+        inset:-4px;
+        border-radius:50%;
+        background:conic-gradient(from 0deg,var(--cyan),var(--violet),var(--pink),var(--cyan));
+        animation:spin 9s linear infinite;
+        filter:blur(1px);
+    }
+    .avatar-wrap::after{
+        content:"";
+        position:absolute;
+        inset:-4px;
+        border-radius:50%;
+        background:conic-gradient(from 0deg,var(--cyan),var(--violet),var(--pink),var(--cyan));
+        animation:spin 9s linear infinite;
+        filter:blur(16px);
+        opacity:.55;
+    }
+    .avatar-wrap img{
+        position:relative;
+        z-index:2;
+        width:100%; height:100%;
+        object-fit:cover;
+        border-radius:50%;
+        border:4px solid #0a0d15;
+        background:linear-gradient(135deg,var(--cyan),var(--violet));
+        display:block;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-        .left-section {
-            margin-bottom: 30px;
-        }
+    /* ===== NAME ===== */
+    .name{
+        font-family:'Space Grotesk',sans-serif;
+        font-size:1.65rem;
+        font-weight:700;
+        letter-spacing:.06em;
+        text-align:center;
+        text-transform:uppercase;
+        background:linear-gradient(100deg,#ffffff,#8fe9ff 35%,#c0b0ff 60%,#ffffff 90%);
+        background-size:250% auto;
+        -webkit-background-clip:text;
+        background-clip:text;
+        -webkit-text-fill-color:transparent;
+        animation:shine 7s linear infinite;
+    }
+    @keyframes shine{to{background-position:250% center}}
 
-        .left-section h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            padding-bottom: 5px;
-        }
+    .job-title{
+        text-align:center;
+        font-size:.8rem;
+        font-weight:500;
+        letter-spacing:.24em;
+        text-transform:uppercase;
+        color:var(--cyan);
+        margin-top:10px;
+        text-shadow:0 0 22px rgba(46,230,255,.55);
+    }
 
-        .left-section p, .left-section li {
-            font-size: 0.85rem;
-            line-height: 1.6;
-            color: #e0e0e0;
-        }
+    /* ===== SECTION TITLE ===== */
+    .sec-title{
+        font-family:'Space Grotesk',sans-serif;
+        font-size:.74rem;
+        font-weight:700;
+        letter-spacing:.22em;
+        text-transform:uppercase;
+        color:var(--cyan);
+        display:flex;
+        align-items:center;
+        gap:12px;
+        margin-bottom:18px;
+    }
+    .sec-title::after{
+        content:"";
+        flex:1;
+        height:1px;
+        background:linear-gradient(90deg,rgba(46,230,255,.55),transparent);
+    }
 
-        .left-section ul {
-            list-style-type: none;
-        }
+    /* ===== TEXT ===== */
+    .body-text{
+        font-size:.86rem;
+        line-height:1.75;
+        color:var(--muted);
+    }
 
-        .left-section ul li {
-            position: relative;
-            padding-left: 15px;
-            margin-bottom: 8px;
-        }
+    .dot-list{list-style:none; display:flex; flex-direction:column; gap:10px}
+    .dot-list li{
+        position:relative;
+        padding-left:20px;
+        font-size:.85rem;
+        line-height:1.65;
+        color:var(--muted);
+        transition:color .3s, transform .3s;
+    }
+    .dot-list li::before{
+        content:"";
+        position:absolute;
+        left:0; top:.55em;
+        width:7px; height:7px;
+        border-radius:50%;
+        background:linear-gradient(135deg,var(--cyan),var(--violet));
+        box-shadow:0 0 10px rgba(46,230,255,.8);
+    }
+    .dot-list li:hover{color:#fff; transform:translateX(4px)}
 
-        .left-section ul li::before {
-            content: "-";
-            position: absolute;
-            left: 0;
-        }
+    /* ===== CONTACT ===== */
+    .contact-item{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        padding:9px 12px;
+        border-radius:12px;
+        font-size:.83rem;
+        color:var(--muted);
+        transition:background .3s, transform .3s;
+    }
+    .contact-item:hover{background:rgba(46,230,255,.07); transform:translateX(4px)}
+    .c-label{
+        min-width:64px;
+        font-size:.68rem;
+        font-weight:700;
+        letter-spacing:.1em;
+        text-transform:uppercase;
+        color:var(--cyan);
+    }
+    .c-value{color:#dfe7f3; word-break:break-all}
 
-        .contact-info p {
-            margin-bottom: 10px;
-            font-size: 0.85rem;
-        }
-        
-        .contact-info span {
-            font-weight: 500;
-            color: #fff;
-        }
+    /* ===== EXPERIENCE TIMELINE ===== */
+    .timeline{position:relative; padding-left:26px}
+    .timeline::before{
+        content:"";
+        position:absolute;
+        left:6px; top:8px; bottom:8px;
+        width:2px;
+        background:linear-gradient(180deg,var(--cyan),var(--violet),transparent);
+        opacity:.5;
+    }
+    .exp{
+        position:relative;
+        padding-bottom:28px;
+    }
+    .exp:last-child{padding-bottom:0}
+    .exp::before{
+        content:"";
+        position:absolute;
+        left:-26px; top:6px;
+        width:14px; height:14px;
+        border-radius:50%;
+        background:#0a0d15;
+        border:2px solid var(--cyan);
+        box-shadow:0 0 14px rgba(46,230,255,.85);
+        animation:pulseDot 2.4s ease-in-out infinite;
+    }
+    @keyframes pulseDot{
+        0%,100%{box-shadow:0 0 10px rgba(46,230,255,.6)}
+        50%{box-shadow:0 0 22px rgba(46,230,255,1)}
+    }
+    .company{
+        font-family:'Space Grotesk',sans-serif;
+        font-size:1rem;
+        font-weight:700;
+        color:#fff;
+        margin-bottom:5px;
+    }
+    .role{
+        font-size:.73rem;
+        font-weight:600;
+        letter-spacing:.12em;
+        text-transform:uppercase;
+        color:var(--pink);
+        margin-bottom:12px;
+        text-shadow:0 0 18px rgba(255,78,205,.4);
+    }
 
-        /* --- RIGHT COLUMN --- */
-        .right-column {
-            width: 65%;
-            padding: 40px;
-            background-color: #ffffff;
-            color: #333;
-        }
+    /* ===== SKILL RINGS ===== */
+    .skills-container{
+        display:flex;
+        justify-content:space-around;
+        align-items:flex-start;
+        gap:16px;
+        flex-wrap:wrap;
+        padding-top:6px;
+    }
+    .skill{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:12px;
+        width:120px;
+    }
+    .ring-box{
+        position:relative;
+        width:112px; height:112px;
+    }
+    .ring{width:100%; height:100%; transform:rotate(-90deg)}
+    .ring-bg{
+        fill:none;
+        stroke:rgba(255,255,255,.07);
+        stroke-width:7;
+    }
+    .ring-fill{
+        fill:none;
+        stroke:url(#grad);
+        stroke-width:7;
+        stroke-linecap:round;
+        transition:stroke-dashoffset 1.8s cubic-bezier(.16,1,.3,1);
+        filter:drop-shadow(0 0 8px rgba(46,230,255,.75));
+    }
+    .skill-val{
+        position:absolute;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-family:'Space Grotesk',sans-serif;
+        font-size:1.15rem;
+        font-weight:700;
+        color:#fff;
+    }
+    .skill-name{
+        font-size:.8rem;
+        font-weight:600;
+        letter-spacing:.08em;
+        color:var(--muted);
+        text-align:center;
+    }
 
-        .right-section {
-            margin-bottom: 35px;
-        }
+    /* ===== RESPONSIVE ===== */
+    @media (max-width:960px){
+        .cv-wrapper{grid-template-columns:1fr; padding:88px 18px 60px}
+        .sidebar{position:static}
+        #lang-toggle{top:16px; right:16px; padding:9px 16px; font-size:.72rem}
+    }
 
-        .right-section h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-
-        .experience-item {
-            margin-bottom: 20px;
-        }
-
-        .job-header {
-            margin-bottom: 8px;
-        }
-
-        .company-name {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: #2c3e50;
-        }
-
-        .date-role {
-            font-size: 0.85rem;
-            color: #e74c3c;
-            font-weight: 500;
-            margin-top: 2px;
-            margin-bottom: 8px;
-        }
-
-        .experience-item ul {
-            list-style-type: none;
-        }
-
-        .experience-item ul li {
-            font-size: 0.85rem;
-            line-height: 1.5;
-            margin-bottom: 5px;
-            color: #555;
-            position: relative;
-            padding-left: 15px;
-        }
-
-        .experience-item ul li::before {
-            content: "-";
-            position: absolute;
-            left: 0;
-            color: #555;
-        }
-
-        /* --- SKILLS CIRCLES --- */
-        .skills-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .skill-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 30%;
-        }
-
-        .circle {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            margin-bottom: 10px;
-        }
-
-        /* Tạo phần nền xám cho vòng tròn */
-        .circle::after {
-            content: "";
-            position: absolute;
-            width: 74px;
-            height: 74px;
-            background-color: #fff;
-            border-radius: 50%;
-            z-index: 1;
-        }
-
-        .circle span {
-            position: relative;
-            z-index: 2;
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: #333;
-        }
-
-        /* Vòng tròn 90% */
-        .circle-90 {
-            background: conic-gradient(#e74c3c 90%, #f0f0f0 0);
-        }
-
-        /* Vòng tròn 75% */
-        .circle-75 {
-            background: conic-gradient(#e74c3c 75%, #f0f0f0 0);
-        }
-
-        /* Vòng tròn 60% */
-        .circle-60 {
-            background: conic-gradient(#e74c3c 60%, #f0f0f0 0);
-        }
-
-        .skill-name {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #333;
-        }
-
-        /* --- INTERESTS --- */
-        .interests ul {
-            list-style-type: none;
-        }
-
-        .interests ul li {
-            font-size: 0.9rem;
-            line-height: 1.8;
-            color: #555;
-            position: relative;
-            padding-left: 15px;
-        }
-
-        .interests ul li::before {
-            content: "-";
-            position: absolute;
-            left: 0;
-        }
-    </style>
+    @media (prefers-reduced-motion:reduce){
+        *{animation-duration:.01ms !important; transition-duration:.01ms !important}
+    }
+</style>
 </head>
 <body>
 
-    <!-- Nút chuyển đổi ngôn ngữ -->
-    <button id="lang-toggle" onclick="toggleLanguage()">Switch to English</button>
+<canvas id="bg3d"></canvas>
 
-    <div class="cv-container">
-        <!-- CỘT TRÁI -->
-        <div class="left-column">
-            <div class="profile-pic-container">
-                <!-- Lưu ảnh của bạn vào cùng thư mục và đặt tên là avatar.jpg -->
-                <img src="DDF9E085-27C2-4FA8-8201-9E0CD7513B5A.png" alt="Avatar" class="profile-pic">
+<button id="lang-toggle" onclick="toggleLanguage()">Switch to English</button>
+
+<div class="cv-wrapper">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar">
+
+        <div class="reveal">
+            <div class="card" style="text-align:center">
+                <div class="avatar-wrap">
+                    <img src="DDF9E085-27C2-4FA8-8201-9E0CD7513B5A.png" alt="Avatar">
+                </div>
+                <h1 class="name" data-vi="HÀ HỮU NAM" data-en="HA HUU NAM">HÀ HỮU NAM</h1>
+                <p class="job-title" data-vi="Software Engineer" data-en="Software Engineer">Software Engineer</p>
             </div>
-            
-            <h1 class="name" data-vi="HÀ HỮU NAM" data-en="HA HUU NAM">HÀ HỮU NAM</h1>
-            <p class="job-title" data-vi="Software Engineer" data-en="Software Engineer">Software Engineer</p>
+        </div>
 
-            <div class="left-section">
-                <h3 data-vi="Mục tiêu nghề nghiệp" data-en="Career Objective">Mục tiêu nghề nghiệp</h3>
-                <p data-vi="Tôi là một Lập trình viên Fullstack với hơn 2 năm kinh nghiệm. Tôi mong muốn được làm việc trong môi trường năng động, chuyên nghiệp để áp dụng kiến thức về phát triển phần mềm, tối ưu hệ thống. Mục tiêu trở thành Senior Developer và đóng góp vào sự phát triển của các dự án công nghệ cao." 
+        <div class="reveal">
+            <div class="card">
+                <h3 class="sec-title" data-vi="Mục tiêu nghề nghiệp" data-en="Career Objective">Mục tiêu nghề nghiệp</h3>
+                <p class="body-text"
+                   data-vi="Tôi là một Lập trình viên Fullstack với hơn 2 năm kinh nghiệm. Tôi mong muốn được làm việc trong môi trường năng động, chuyên nghiệp để áp dụng kiến thức về phát triển phần mềm, tối ưu hệ thống. Mục tiêu trở thành Senior Developer và đóng góp vào sự phát triển của các dự án công nghệ cao."
                    data-en="I am a Fullstack Developer with over 2 years of experience. I am looking to work in a dynamic and professional environment to apply my knowledge in software development and system optimization. My goal is to become a Senior Developer and contribute to the growth of high-tech projects.">
                    Tôi là một Lập trình viên Fullstack với hơn 2 năm kinh nghiệm. Tôi mong muốn được làm việc trong môi trường năng động, chuyên nghiệp để áp dụng kiến thức về phát triển phần mềm, tối ưu hệ thống. Mục tiêu trở thành Senior Developer và đóng góp vào sự phát triển của các dự án công nghệ cao.
                 </p>
             </div>
+        </div>
 
-            <div class="left-section">
-                <h3 data-vi="Điểm mạnh" data-en="Strengths">Điểm mạnh</h3>
-                <ul>
+        <div class="reveal">
+            <div class="card">
+                <h3 class="sec-title" data-vi="Điểm mạnh" data-en="Strengths">Điểm mạnh</h3>
+                <ul class="dot-list">
                     <li data-vi="Tư duy logic và giải quyết vấn đề tốt." data-en="Good logical thinking and problem-solving skills.">Tư duy logic và giải quyết vấn đề tốt.</li>
                     <li data-vi="Khả năng tự học và cập nhật công nghệ mới nhanh." data-en="Fast self-learning ability and quick update of new technologies.">Khả năng tự học và cập nhật công nghệ mới nhanh.</li>
                     <li data-vi="Làm việc nhóm hiệu quả theo mô hình Agile/Scrum." data-en="Effective teamwork following Agile/Scrum models.">Làm việc nhóm hiệu quả theo mô hình Agile/Scrum.</li>
@@ -323,123 +418,351 @@
                     <li data-vi="Kỹ năng giao tiếp, đọc hiểu tài liệu tiếng Anh tốt." data-en="Good communication skills and English reading comprehension.">Kỹ năng giao tiếp, đọc hiểu tài liệu tiếng Anh tốt.</li>
                 </ul>
             </div>
+        </div>
 
-            <div class="left-section contact-info">
-                <h3 data-vi="Thông tin liên hệ" data-en="Contact Information">Thông tin liên hệ</h3>
-                <p data-vi="<strong>SĐT:</strong> <span>0966 142 515</span>" data-en="<strong>Phone:</strong> <span>0966 142 515</span>">
-                    <strong>SĐT:</strong> <span>0966 142 515</span>
-                </p>
-                <p data-vi="<strong>Email:</strong> <span>hahuunam2020@gmail.com</span>" data-en="<strong>Email:</strong> <span>hahuunam2020@gmail.com</span>">
-                    <strong>Email:</strong> <span>hahuunam2020@gmail.com</span>
-                </p>
-                <p data-vi="<strong>GitHub:</strong> <span>github.com/hahuunam205</span>" data-en="<strong>GitHub:</strong> <span>github.com/hahuunam205</span>">
-                    <strong>GitHub:</strong> <span>github.com/hahuunam205</span>
-                </p>
-                <p data-vi="<strong>Địa chỉ:</strong> <span>Quận 12, TP. Hồ Chí Minh</span>" data-en="<strong>Address:</strong> <span>District 12, Ho Chi Minh City</span>">
-                    <strong>Địa chỉ:</strong> <span>Quận 12, TP. Hồ Chí Minh</span>
-                </p>
+        <div class="reveal">
+            <div class="card">
+                <h3 class="sec-title" data-vi="Thông tin liên hệ" data-en="Contact Information">Thông tin liên hệ</h3>
+                <div class="contact-item">
+                    <span class="c-label" data-vi="SĐT" data-en="Phone">SĐT</span>
+                    <span class="c-value">0966 142 515</span>
+                </div>
+                <div class="contact-item">
+                    <span class="c-label">Email</span>
+                    <span class="c-value">hahuunam2020@gmail.com</span>
+                </div>
+                <div class="contact-item">
+                    <span class="c-label">GitHub</span>
+                    <span class="c-value">github.com/hahuunam205</span>
+                </div>
+                <div class="contact-item">
+                    <span class="c-label" data-vi="Địa chỉ" data-en="Address">Địa chỉ</span>
+                    <span class="c-value" data-vi="Quận 12, TP. Hồ Chí Minh" data-en="District 12, Ho Chi Minh City">Quận 12, TP. Hồ Chí Minh</span>
+                </div>
             </div>
         </div>
 
-        <!-- CỘT PHẢI -->
-        <div class="right-column">
-            
-            <div class="right-section">
-                <h2 data-vi="Quá trình làm việc" data-en="Work Experience">Quá trình làm việc</h2>
-                
-                <div class="experience-item">
-                    <div class="job-header">
-                        <div class="company-name" data-vi="Công Ty Cổ Phần Công Nghệ VNG" data-en="VNG Corporation">Công Ty Cổ Phần Công Nghệ VNG</div>
-                        <div class="date-role" data-vi="FULLSTACK DEVELOPER (2024 - Hiện tại)" data-en="FULLSTACK DEVELOPER (2024 - Present)">FULLSTACK DEVELOPER (2024 - Hiện tại)</div>
-                    </div>
-                    <ul>
-                        <li data-vi="Phát triển và bảo trì các tính năng mới cho hệ thống web sử dụng ReactJS và Node.js." data-en="Develop and maintain new features for the web system using ReactJS and Node.js.">Phát triển và bảo trì các tính năng mới cho hệ thống web sử dụng ReactJS và Node.js.</li>
-                        <li data-vi="Thiết kế và tối ưu hóa cơ sở dữ liệu (MySQL, MongoDB) giúp tăng tốc độ truy vấn 30%." data-en="Design and optimize databases (MySQL, MongoDB) to increase query speed by 30%.">Thiết kế và tối ưu hóa cơ sở dữ liệu (MySQL, MongoDB) giúp tăng tốc độ truy vấn 30%.</li>
-                        <li data-vi="Phối hợp với team QA và UI/UX để đảm bảo sản phẩm chất lượng cao trước khi release." data-en="Coordinate with the QA and UI/UX teams to ensure high product quality before release.">Phối hợp với team QA và UI/UX để đảm bảo sản phẩm chất lượng cao trước khi release.</li>
-                        <li data-vi="Tham gia review code và hướng dẫn các bạn thực tập sinh." data-en="Participate in code reviews and mentor interns.">Tham gia review code và hướng dẫn các bạn thực tập sinh.</li>
-                    </ul>
-                </div>
+    </aside>
 
-                <div class="experience-item">
-                    <div class="job-header">
-                        <div class="company-name" data-vi="Công Ty TNHH Phần Mềm FPT" data-en="FPT Software Company Limited">Công Ty TNHH Phần Mềm FPT</div>
-                        <div class="date-role" data-vi="BACKEND DEVELOPER (2022 - 2024)" data-en="BACKEND DEVELOPER (2022 - 2024)">BACKEND DEVELOPER (2022 - 2024)</div>
+    <!-- ============ CONTENT ============ -->
+    <div class="content">
+
+        <div class="reveal">
+            <div class="card">
+                <h2 class="sec-title" data-vi="Quá trình làm việc" data-en="Work Experience">Quá trình làm việc</h2>
+
+                <div class="timeline">
+
+                    <div class="exp">
+                        <div class="company" data-vi="Công Ty Cổ Phần Công Nghệ VNG" data-en="VNG Corporation">Công Ty Cổ Phần Công Nghệ VNG</div>
+                        <div class="role" data-vi="Fullstack Developer · 2024 — Hiện tại" data-en="Fullstack Developer · 2024 — Present">Fullstack Developer · 2024 — Hiện tại</div>
+                        <ul class="dot-list">
+                            <li data-vi="Phát triển và bảo trì các tính năng mới cho hệ thống web sử dụng ReactJS và Node.js." data-en="Develop and maintain new features for the web system using ReactJS and Node.js.">Phát triển và bảo trì các tính năng mới cho hệ thống web sử dụng ReactJS và Node.js.</li>
+                            <li data-vi="Thiết kế và tối ưu hóa cơ sở dữ liệu (MySQL, MongoDB) giúp tăng tốc độ truy vấn 30%." data-en="Design and optimize databases (MySQL, MongoDB) to increase query speed by 30%.">Thiết kế và tối ưu hóa cơ sở dữ liệu (MySQL, MongoDB) giúp tăng tốc độ truy vấn 30%.</li>
+                            <li data-vi="Phối hợp với team QA và UI/UX để đảm bảo sản phẩm chất lượng cao trước khi release." data-en="Coordinate with the QA and UI/UX teams to ensure high product quality before release.">Phối hợp với team QA và UI/UX để đảm bảo sản phẩm chất lượng cao trước khi release.</li>
+                            <li data-vi="Tham gia review code và hướng dẫn các bạn thực tập sinh." data-en="Participate in code reviews and mentor interns.">Tham gia review code và hướng dẫn các bạn thực tập sinh.</li>
+                        </ul>
                     </div>
-                    <ul>
-                        <li data-vi="Xây dựng và phát triển các RESTful API bằng Java Spring Boot phục vụ hệ thống nội bộ." data-en="Build and develop RESTful APIs using Java Spring Boot for internal systems.">Xây dựng và phát triển các RESTful API bằng Java Spring Boot phục vụ hệ thống nội bộ.</li>
-                        <li data-vi="Tích hợp các cổng thanh toán và dịch vụ bên thứ ba (Third-party APIs)." data-en="Integrate payment gateways and third-party APIs.">Tích hợp các cổng thanh toán và dịch vụ bên thứ ba (Third-party APIs).</li>
-                        <li data-vi="Viết Unit Test đảm bảo độ bao phủ code (Code Coverage) trên 80%." data-en="Write Unit Tests to ensure code coverage is above 80%.">Viết Unit Test đảm bảo độ bao phủ code (Code Coverage) trên 80%.</li>
-                        <li data-vi="Tham gia phân tích yêu cầu và thiết kế hệ thống cùng Tech Lead." data-en="Participate in requirement analysis and system design with the Tech Lead.">Tham gia phân tích yêu cầu và thiết kế hệ thống cùng Tech Lead.</li>
-                    </ul>
+
+                    <div class="exp">
+                        <div class="company" data-vi="Công Ty TNHH Phần Mềm FPT" data-en="FPT Software Company Limited">Công Ty TNHH Phần Mềm FPT</div>
+                        <div class="role" data-vi="Backend Developer · 2022 — 2024" data-en="Backend Developer · 2022 — 2024">Backend Developer · 2022 — 2024</div>
+                        <ul class="dot-list">
+                            <li data-vi="Xây dựng và phát triển các RESTful API bằng Java Spring Boot phục vụ hệ thống nội bộ." data-en="Build and develop RESTful APIs using Java Spring Boot for internal systems.">Xây dựng và phát triển các RESTful API bằng Java Spring Boot phục vụ hệ thống nội bộ.</li>
+                            <li data-vi="Tích hợp các cổng thanh toán và dịch vụ bên thứ ba (Third-party APIs)." data-en="Integrate payment gateways and third-party APIs.">Tích hợp các cổng thanh toán và dịch vụ bên thứ ba (Third-party APIs).</li>
+                            <li data-vi="Viết Unit Test đảm bảo độ bao phủ code (Code Coverage) trên 80%." data-en="Write Unit Tests to ensure code coverage is above 80%.">Viết Unit Test đảm bảo độ bao phủ code (Code Coverage) trên 80%.</li>
+                            <li data-vi="Tham gia phân tích yêu cầu và thiết kế hệ thống cùng Tech Lead." data-en="Participate in requirement analysis and system design with the Tech Lead.">Tham gia phân tích yêu cầu và thiết kế hệ thống cùng Tech Lead.</li>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
+        </div>
 
-            <div class="right-section">
-                <h2 data-vi="Công cụ sử dụng" data-en="Tools & Skills">Công cụ sử dụng</h2>
-                <div class="skills-container">
-                    <div class="skill-wrapper">
-                        <div class="circle circle-90">
-                            <span>90%</span>
+        <div class="reveal">
+            <div class="card">
+                <h2 class="sec-title" data-vi="Công cụ sử dụng" data-en="Tools &amp; Skills">Công cụ sử dụng</h2>
+
+                <svg width="0" height="0" style="position:absolute">
+                    <defs>
+                        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#2ee6ff"/>
+                            <stop offset="100%" stop-color="#7c5cff"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+
+                <div class="skills-container" id="skills">
+                    <div class="skill">
+                        <div class="ring-box">
+                            <svg class="ring" viewBox="0 0 120 120">
+                                <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                                <circle class="ring-fill" cx="60" cy="60" r="52" data-pct="90"/>
+                            </svg>
+                            <span class="skill-val">0%</span>
                         </div>
                         <div class="skill-name">ReactJS</div>
                     </div>
-                    
-                    <div class="skill-wrapper">
-                        <div class="circle circle-75">
-                            <span>75%</span>
+
+                    <div class="skill">
+                        <div class="ring-box">
+                            <svg class="ring" viewBox="0 0 120 120">
+                                <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                                <circle class="ring-fill" cx="60" cy="60" r="52" data-pct="75"/>
+                            </svg>
+                            <span class="skill-val">0%</span>
                         </div>
                         <div class="skill-name">NodeJS</div>
                     </div>
 
-                    <div class="skill-wrapper">
-                        <div class="circle circle-60">
-                            <span>60%</span>
+                    <div class="skill">
+                        <div class="ring-box">
+                            <svg class="ring" viewBox="0 0 120 120">
+                                <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                                <circle class="ring-fill" cx="60" cy="60" r="52" data-pct="60"/>
+                            </svg>
+                            <span class="skill-val">0%</span>
                         </div>
                         <div class="skill-name">Docker</div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="right-section interests">
-                <h2 data-vi="Sở thích & Mối quan tâm" data-en="Hobbies & Interests">Sở thích & Mối quan tâm</h2>
-                <ul>
+        <div class="reveal">
+            <div class="card">
+                <h2 class="sec-title" data-vi="Sở thích &amp; Mối quan tâm" data-en="Hobbies &amp; Interests">Sở thích &amp; Mối quan tâm</h2>
+                <ul class="dot-list">
                     <li data-vi="Đọc sách và blog về công nghệ, AI, Blockchain." data-en="Reading books and blogs about technology, AI, and Blockchain.">Đọc sách và blog về công nghệ, AI, Blockchain.</li>
                     <li data-vi="Tham gia đóng góp mã nguồn mở (Open Source) trên GitHub." data-en="Contributing to Open Source projects on GitHub.">Tham gia đóng góp mã nguồn mở (Open Source) trên GitHub.</li>
                     <li data-vi="Chơi cờ vua và thể thao điện tử (eSports)." data-en="Playing chess and eSports.">Chơi cờ vua và thể thao điện tử (eSports).</li>
                     <li data-vi="Đam mê tìm tòi các kiến trúc phần mềm mới (Microservices, Serverless)." data-en="Passionate about exploring new software architectures (Microservices, Serverless).">Đam mê tìm tòi các kiến trúc phần mềm mới (Microservices, Serverless).</li>
                 </ul>
             </div>
-
         </div>
+
     </div>
+</div>
 
-    <!-- Script xử lý chuyển đổi ngôn ngữ -->
-    <script>
-        let currentLang = 'vi'; // Ngôn ngữ mặc định là Tiếng Việt
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* =========================================================
+   1. THREE.JS 3D BACKGROUND
+   ========================================================= */
+(function () {
+    const canvas = document.getElementById('bg3d');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'vi' ? 'en' : 'vi';
-            applyLanguage(currentLang);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
+    camera.position.z = 6.2;
+
+    /* --- Group xoay chính --- */
+    const group = new THREE.Group();
+    scene.add(group);
+
+    /* Lõi icosahedron wireframe */
+    const icoGeo = new THREE.IcosahedronGeometry(2.15, 1);
+    const icoMat = new THREE.MeshBasicMaterial({
+        color: 0x2ee6ff, wireframe: true, transparent: true, opacity: 0.16
+    });
+    group.add(new THREE.Mesh(icoGeo, icoMat));
+
+    /* Các điểm sáng ở đỉnh */
+    const dotMat = new THREE.PointsMaterial({
+        color: 0x9fe9ff, size: 0.075, transparent: true, opacity: 0.9,
+        blending: THREE.AdditiveBlending, depthWrite: false
+    });
+    group.add(new THREE.Points(icoGeo, dotMat));
+
+    /* Vỏ ngoài */
+    const outerGeo = new THREE.IcosahedronGeometry(3.15, 0);
+    const outerMat = new THREE.MeshBasicMaterial({
+        color: 0x7c5cff, wireframe: true, transparent: true, opacity: 0.11
+    });
+    group.add(new THREE.Mesh(outerGeo, outerMat));
+
+    /* Vòng xuyến phụ */
+    const torusGeo = new THREE.TorusGeometry(3.6, 0.012, 8, 120);
+    const torusMat = new THREE.MeshBasicMaterial({
+        color: 0xff4ecd, transparent: true, opacity: 0.35
+    });
+    const torus = new THREE.Mesh(torusGeo, torusMat);
+    torus.rotation.x = Math.PI / 2.4;
+    scene.add(torus);
+
+    /* --- Starfield --- */
+    const STAR_COUNT = 800;
+    const starPos = new Float32Array(STAR_COUNT * 3);
+    for (let i = 0; i < STAR_COUNT; i++) {
+        const r = 8 + Math.random() * 12;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        starPos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+        starPos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        starPos[i * 3 + 2] = r * Math.cos(phi);
+    }
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({
+        color: 0xffffff, size: 0.045, transparent: true, opacity: 0.65,
+        blending: THREE.AdditiveBlending, depthWrite: false
+    }));
+    scene.add(stars);
+
+    /* --- Chuột parallax --- */
+    let mx = 0, my = 0;
+    window.addEventListener('mousemove', e => {
+        mx = (e.clientX / window.innerWidth) * 2 - 1;
+        my = (e.clientY / window.innerHeight) * 2 - 1;
+    });
+
+    /* --- Scroll xoay thêm --- */
+    let scrollY = 0;
+    window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+    /* --- Animate --- */
+    const clock = new THREE.Clock();
+    function animate() {
+        const t = clock.getElapsedTime();
+
+        group.rotation.y += 0.0016;
+        group.rotation.x += 0.0009;
+
+        group.position.x += (mx * 0.75 - group.position.x) * 0.035;
+        group.position.y += (-my * 0.75 - group.position.y) * 0.035;
+
+        const scale = 1 + Math.sin(t * 0.9) * 0.028;
+        group.scale.setScalar(scale);
+
+        torus.rotation.z += 0.0025;
+        torus.rotation.y = Math.sin(t * 0.35) * 0.45;
+        torus.position.y = Math.sin(t * 0.5) * 0.35 - scrollY * 0.0012;
+
+        stars.rotation.y = t * 0.018;
+        stars.rotation.x = Math.sin(t * 0.12) * 0.12;
+
+        camera.position.z = 6.2 + scrollY * 0.0018;
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    /* --- Resize --- */
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+})();
+
+/* =========================================================
+   2. SCROLL REVEAL
+   ========================================================= */
+(function () {
+    const items = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => entry.target.classList.add('in'), i * 90);
+                io.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    items.forEach(el => io.observe(el));
+})();
+
+/* =========================================================
+   3. 3D TILT ON CARDS
+   ========================================================= */
+(function () {
+    const cards = document.querySelectorAll('.card');
+    const MAX = 7;
+
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+
+            card.style.transform =
+                `perspective(1000px) rotateY(${x * MAX}deg) rotateX(${-y * MAX}deg) translateZ(8px) scale(1.012)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+        });
+    });
+})();
+
+/* =========================================================
+   4. SKILL RINGS ANIMATION
+   ========================================================= */
+(function () {
+    const CIRC = 2 * Math.PI * 52;
+
+    document.querySelectorAll('.ring-fill').forEach(el => {
+        el.style.strokeDasharray = CIRC;
+        el.style.strokeDashoffset = CIRC;
+    });
+
+    function animateSkill(skillEl) {
+        const fill = skillEl.querySelector('.ring-fill');
+        const valEl = skillEl.querySelector('.skill-val');
+        const pct = +fill.dataset.pct;
+
+        fill.style.strokeDashoffset = CIRC * (1 - pct / 100);
+
+        let start = null;
+        function step(ts) {
+            if (!start) start = ts;
+            const p = Math.min((ts - start) / 1600, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            valEl.textContent = Math.round(pct * eased) + '%';
+            if (p < 1) requestAnimationFrame(step);
         }
+        requestAnimationFrame(step);
+    }
 
-        function applyLanguage(lang) {
-            // Tìm tất cả các phần tử có thuộc tính data-vi
-            const elements = document.querySelectorAll('[data-vi]');
-            
-            elements.forEach(el => {
-                if (lang === 'vi') {
-                    // Nếu là tiếng Việt, lấy nội dung từ data-vi
-                    el.innerHTML = el.getAttribute('data-vi');
-                } else {
-                    // Nếu là tiếng Anh, lấy nội dung từ data-en
-                    el.innerHTML = el.getAttribute('data-en');
+    const skillsBox = document.getElementById('skills');
+    if (skillsBox) {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.skill').forEach((s, i) => {
+                        setTimeout(() => animateSkill(s), i * 180);
+                    });
+                    io.unobserve(entry.target);
                 }
             });
-            
-            // Cập nhật lại text của nút bấm
-            const toggleBtn = document.getElementById('lang-toggle');
-            toggleBtn.innerText = lang === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt';
-        }
-    </script>
+        }, { threshold: 0.35 });
+        io.observe(skillsBox);
+    }
+})();
+
+/* =========================================================
+   5. LANGUAGE TOGGLE
+   ========================================================= */
+let currentLang = 'vi';
+
+function toggleLanguage() {
+    currentLang = currentLang === 'vi' ? 'en' : 'vi';
+    applyLanguage(currentLang);
+}
+
+function applyLanguage(lang) {
+    document.querySelectorAll('[data-vi]').forEach(el => {
+        const content = el.getAttribute(lang === 'vi' ? 'data-vi' : 'data-en');
+        if (content !== null) el.innerHTML = content;
+    });
+
+    const btn = document.getElementById('lang-toggle');
+    btn.innerText = lang === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt';
+}
+</script>
 </body>
 </html>
