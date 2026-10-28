@@ -2,14 +2,16 @@
 
 Trang CV cá nhân viết bằng HTML/CSS/JavaScript thuần, không cần cài đặt hay build.
 
+🔗 **Xem online:** https://hahuunam205.github.io/cv/
+
 
 ## Cách chạy
 
-Mở trực tiếp file `CV giữa kì.html` bằng trình duyệt:
+Mở trực tiếp file `index.html` bằng trình duyệt:
 
 ```bash
 # Windows
-start "" "CV giữa kì.html"
+start "" index.html
 ```
 
 
